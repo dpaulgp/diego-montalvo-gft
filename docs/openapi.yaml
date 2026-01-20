@@ -1,0 +1,94 @@
+openapi: 3.0.3
+info:
+  title: Pricing Service API
+  version: 1.0.0
+  description: |
+    API para consultar el precio aplicable en una fecha para un producto y brand.
+servers:
+  - url: http://localhost:8090
+paths:
+  /api/v1/prices:
+    get:
+      operationId: findPrice
+      summary: Obtiene el precio vigente para un producto
+      parameters:
+        - in: query
+          name: brandId
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+          description: Identificador de la cadena (1 = ZARA)
+        - in: query
+          name: productId
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+          description: Identificador del producto
+        - in: query
+          name: applicationDate
+          required: true
+          schema:
+            type: string
+          description: Fecha y hora en la que se desea aplicar el precio
+      responses:
+        '200':
+          description: Precio encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+        '400':
+          description: Petición inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '404':
+          description: No existe precio aplicable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  schemas:
+    PriceResponse:
+      type: object
+      required: [productId, brandId, priceList, startDate, endDate, amount, currency]
+      properties:
+        productId:
+          type: integer
+          format: int64
+        brandId:
+          type: integer
+          format: int64
+        priceList:
+          type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+    ApiError:
+      type: object
+      required: [timestamp, status, error, message, path]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
