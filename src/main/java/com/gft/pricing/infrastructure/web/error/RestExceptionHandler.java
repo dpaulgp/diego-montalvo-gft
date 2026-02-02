@@ -1,9 +1,8 @@
 package com.gft.pricing.infrastructure.web.error;
 
-import com.gft.pricing.domain.exception.PriceNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolationException;
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -12,7 +11,10 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.gft.pricing.domain.exception.PriceNotFoundException;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
@@ -26,7 +28,8 @@ public class RestExceptionHandler {
             ConstraintViolationException.class,
             MethodArgumentNotValidException.class,
             HttpMessageNotReadableException.class,
-            MissingServletRequestParameterException.class
+            MissingServletRequestParameterException.class,
+            DateTimeParseException.class
     })
     public ResponseEntity<ApiError> handleBadRequest(Exception ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.BAD_REQUEST, "Invalid request", ex.getMessage(), request);
@@ -38,7 +41,7 @@ public class RestExceptionHandler {
     }
 
     private ResponseEntity<ApiError> buildResponse(HttpStatus status, String error, String message,
-                                                   HttpServletRequest request) {
+            HttpServletRequest request) {
         ApiError apiError = new ApiError(
                 Instant.now(),
                 status.value(),
