@@ -1,3 +1,6 @@
 .DS_Store
 .vscode/settings.json
 target/*
+pricing-application/target/*
+pricing-domain/target/*
+pricing-infrastructure/target/*
